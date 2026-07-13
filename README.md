@@ -1,6 +1,6 @@
 # TaskFlow Web
 
-Frontend de TaskFlow, un gestor de tareas con autenticación JWT y dashboard.
+Frontend de TaskFlow, un gestor de tareas con autenticación JWT, tablero Kanban, proyectos y panel de administración.
 
 ## Stack
 
@@ -23,13 +23,29 @@ npm run lint     # Ejecuta ESLint
 
 ```
 src/
-├── api/           # Cliente Axios, servicios (auth, dashboard)
+├── api/           # Cliente Axios + servicios (auth, dashboard, tasks, projects)
 ├── assets/        # Imágenes y recursos estáticos
-├── components/    # Componentes reutilizables (ProtectedRoute)
-├── context/       # Auth context, hook useAuth
-├── pages/         # LoginPage, RegisterPage, DashboardPage
-└── types/         # Interfaces compartidas (User, AuthPayload, etc.)
+├── components/    # Componentes UI (Sidebar, Header, KanbanColumn, TaskCard, etc.)
+├── config/        # Configuración del tablero Kanban
+├── context/       # AuthContext + hook useAuth
+├── hooks/         # Custom hooks (useAsyncState)
+├── layouts/       # AppLayout (Header + Sidebar + Footer)
+├── pages/         # Login, Register, Dashboard, Projects, ProjectDetail, Tasks, Settings
+├── types/         # Interfaces compartidas (User, Project, Task, TaskStatus, etc.)
+└── utils/         # Funciones utilitarias (theme, initials)
 ```
+
+## Rutas
+
+| Ruta               | Página           | Requiere auth |
+|--------------------|------------------|---------------|
+| `/login`           | Login            | No            |
+| `/register`        | Registro         | No            |
+| `/dashboard`       | Dashboard        | Sí            |
+| `/projects`        | Lista proyectos  | Sí            |
+| `/projects/:id`    | Detalle proyecto | Sí            |
+| `/tasks`           | Tablero Kanban   | Sí            |
+| `/settings`        | Configuración    | Sí            |
 
 ## Variables de entorno
 

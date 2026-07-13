@@ -1,88 +1,19 @@
-import { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 
 import { useAuth } from '../context/useAuth';
 import { dashboardService } from '../api/dashboard.service';
 import type { DashboardStats } from '../api/dashboard.service';
 
 export default function DashboardPage() {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
-  const [menuOpen, setMenuOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
+  const { user } = useAuth();
   const [stats, setStats] = useState<DashboardStats | null>(null);
 
   useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        setMenuOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
+    dashboardService.getStats().then(setStats).catch(() => {});
   }, []);
-
-  useEffect(() => {
-    dashboardService.getStats().then(setStats);
-  }, []);
-
-  const initials = user?.name
-    ?.split(' ')
-    .map((n) => n[0])
-    .join('')
-    .toUpperCase()
-    .slice(0, 2) ?? '?';
-
-  const handleLogout = () => {
-    logout();
-    navigate('/login', { replace: true });
-  };
 
   return (
-    <div className="min-h-screen bg-slate-100">
-      <header className="sticky top-0 z-10 bg-gradient-to-r from-indigo-600 to-violet-600 px-6 py-4 flex items-center justify-between shadow-md">
-        <h1 className="text-xl font-bold text-white tracking-tight">TaskFlow</h1>
-
-        <div className="relative" ref={menuRef}>
-          <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="flex items-center gap-2 p-1 rounded-full hover:bg-white/10 transition-colors"
-          >
-            <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center text-white font-bold text-sm">
-              {initials}
-            </div>
-            <svg className={`w-4 h-4 text-white/70 transition-transform duration-200 ${menuOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
-          </button>
-
-          {menuOpen && (
-            <div className="absolute right-0 top-full mt-2 w-64 bg-white rounded-xl shadow-xl shadow-black/10 border border-slate-200/60 overflow-hidden animate-in">
-              <div className="p-5 text-center border-b border-slate-100">
-                <div className="w-12 h-12 mx-auto rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white font-bold text-lg shadow-md">
-                  {initials}
-                </div>
-                <p className="mt-3 font-semibold text-slate-800 text-sm">{user?.name}</p>
-                <p className="text-xs text-slate-500 truncate">{user?.email}</p>
-              </div>
-
-              <div className="p-2">
-                <button
-                  onClick={handleLogout}
-                  className="flex items-center gap-3 w-full px-4 py-2.5 rounded-lg text-sm text-red-600 hover:bg-red-50 transition-colors"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                  </svg>
-                  Cerrar sesión
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-      </header>
-
-      <main className="max-w-5xl mx-auto p-6 lg:p-8 space-y-6">
+    <div className="max-w-5xl mx-auto space-y-6">
         <div>
           <h2 className="text-2xl font-bold text-slate-800">Dashboard</h2>
           <p className="text-sm text-slate-500 mt-1">Bienvenido de nuevo, {user?.name}</p>
@@ -176,7 +107,6 @@ export default function DashboardPage() {
             </div>
           </div>
         </div>
-      </main>
     </div>
   );
 }
