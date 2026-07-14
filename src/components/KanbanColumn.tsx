@@ -10,10 +10,11 @@ interface Props {
   onDelete: (taskId: string) => void;
   onEdit: (task: Task) => void;
   onAddTask?: () => void;
+  onViewComments: (taskId: string) => void;
 }
 
 export function KanbanColumn({ config, tasks, onStatusChange, onDelete,
-onEdit, onAddTask }: Props) {
+onEdit, onAddTask, onViewComments }: Props) {
   return ( 
     <DroppableColumn id={config.id} dropColor={config.dropColor}>
       <div className={`flex flex-col rounded-xl border ${config.borderColor} ${config.bgColor} min-h-[200px] p-3`}> 
@@ -42,6 +43,7 @@ onEdit, onAddTask }: Props) {
               onStatusChange={onStatusChange}
               onDelete={onDelete}
               onEdit={onEdit}
+              onViewComments={onViewComments}
             /> 
           ))} 
           {tasks.length === 0 && ( 

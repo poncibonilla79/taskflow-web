@@ -7,6 +7,7 @@ interface TaskCardProps {
   onStatusChange: (taskId: string, newStatus: TaskStatus) => void;
   onDelete: (taskId: string) => void;
   onEdit: (task: Task) => void;
+  onViewComments: (taskId: string) => void;
 }
 
 const STATUS_LABELS: Record<TaskStatus, string> = {
@@ -16,7 +17,7 @@ const STATUS_LABELS: Record<TaskStatus, string> = {
   CANCELLED: 'Cancelado',
 };
 
-export default function TaskCard({ task, onStatusChange, onDelete, onEdit }: TaskCardProps) {
+export default function TaskCard({ task, onStatusChange, onDelete, onEdit, onViewComments }: TaskCardProps) {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: `task-${task.id}`,
     data: { task, status: task.status },
@@ -71,21 +72,27 @@ export default function TaskCard({ task, onStatusChange, onDelete, onEdit }: Tas
         </p>
       )}
 
-      {/* Badges: asignado y comentarios */}
-      {(task.assignee || commentCount > 0) && (
-        <div className="mt-2 flex flex-wrap items-center gap-1.5">
-          {task.assignee && (
-            <span className="rounded-full bg-blue-50 px-2 py-0.5 text-[11px] font-medium text-blue-700">
-              {task.assignee.name}
-            </span>
-          )}
-          {commentCount > 0 && (
-            <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-600">
-              💬 {commentCount}
-            </span>
-          )}
-        </div>
-      )}
+      {/* Badges: asignado, fecha y comentarios */}
+      <div className="mt-2 flex flex-wrap items-center gap-1.5">
+        {task.assignee ? (
+          <span className="rounded-full bg-blue-50 px-2 py-0.5 text-[11px] font-medium text-blue-700">
+            {task.assignee.name}
+          </span>
+        ) : (
+          <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-400">
+            Sin asignar
+          </span>
+        )}
+        <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-500">
+          {new Date(task.createdAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })}
+        </span>
+        <button type="button"
+          onClick={(e) => { stopPropagation(e); onViewComments(task.id); }}
+          onPointerDown={stopPropagation}
+          className="rounded-full bg-slate-100 hover:bg-slate-200 px-2 py-0.5 text-[11px] font-medium text-slate-600 transition">
+          💬 {commentCount}
+        </button>
+      </div>
 
       {/* Selector de status */}
       <select

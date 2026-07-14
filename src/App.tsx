@@ -1,8 +1,6 @@
-import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'; 
 import { AuthProvider } from './context/AuthContext'; 
-import { ProtectedRoute } from './components/ProtectedRoute'; 
-import { initTheme } from './utils/theme';
+import { ProtectedRoute } from './components/ProtectedRoute';
 import LoginPage    from './pages/LoginPage'; 
 import RegisterPage from './pages/RegisterPage'; 
 import DashboardPage from './pages/DashboardPage';
@@ -13,8 +11,6 @@ import TasksPage from './pages/TasksPage';
 import './App.css';
   
 export default function App() { 
-  useEffect(() => { initTheme(); }, []);
-
   return ( 
     <BrowserRouter> 
       <AuthProvider> 

@@ -4,16 +4,19 @@ import { DndContext, DragOverlay, closestCorners } from '@dnd-kit/core';
 import type { DragStartEvent, DragEndEvent } from '@dnd-kit/core';
 import { projectsService } from '../api/projects.service';
 import { tasksService } from '../api/tasks.service';
-import type { Project, Task, TaskStatus } from '../types';
+import { usersService } from '../api/users.service';
+import type { Project, Task, TaskStatus, User } from '../types';
 import { KANBAN_COLUMNS } from '../config/kanban';
 import { KanbanColumn } from '../components/KanbanColumn';
 import { CreateTaskModal } from '../components/CreateTaskModal';
+import { CommentModal } from '../components/CommentModal';
 
 export default function ProjectDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [project,  setProject]  = useState<Project | null>(null);
   const [tasks,    setTasks]    = useState<Task[]>([]);
+  const [users,    setUsers]    = useState<User[]>([]);
   const [loading,  setLoading]  = useState(true);
   const [error,    setError]    = useState('');
   const [showModal, setShowModal] = useState(false);
@@ -21,17 +24,20 @@ export default function ProjectDetailPage() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
+  const [commentTaskId, setCommentTaskId] = useState<string | null>(null);
 
   const loadData = useCallback(async () => {
     if (!id) return;
     setLoading(true);
     try {
-      const [proj, taskList] = await Promise.all([
+      const [proj, taskList, userList] = await Promise.all([
         projectsService.getById(id),
         tasksService.getByProject(id),
+        usersService.getAll(),
       ]);
       setProject(proj);
       setTasks(taskList);
+      setUsers(userList);
     } catch { setError('No se pudo cargar el proyecto'); }
     finally { setLoading(false); }
   }, [id]);
@@ -87,6 +93,18 @@ export default function ProjectDetailPage() {
     if (task && task.status !== newStatus) {
       handleStatusChange(taskId, newStatus);
     }
+  };
+
+  const handleViewComments = (taskId: string) => {
+    setCommentTaskId(taskId);
+  };
+
+  const handleCommentChange = (taskId: string, delta: number) => {
+    setTasks(prev => prev.map(t =>
+      t.id === taskId
+        ? { ...t, _count: { comments: (t._count?.comments ?? 0) + delta } }
+        : t
+    ));
   };
 
   const tasksByStatus = KANBAN_COLUMNS.reduce((acc, col) => {
@@ -148,6 +166,7 @@ export default function ProjectDetailPage() {
                 onDelete={handleDelete}
                 onEdit={handleEditTask}
                 onAddTask={col.id === 'TODO' ? () => setShowModal(true) : undefined}
+                onViewComments={handleViewComments}
               />
             ))}
           </div>
@@ -167,8 +186,17 @@ export default function ProjectDetailPage() {
         <CreateTaskModal
           projectId={project.id}
           task={editingTask ?? undefined}
+          users={users}
           onCreated={editingTask ? handleTaskSaved : handleTaskCreated}
           onClose={() => { setShowModal(false); setEditingTask(null); }}
+        />
+      )}
+
+      {commentTaskId && (
+        <CommentModal
+          taskId={commentTaskId}
+          onClose={() => setCommentTaskId(null)}
+          onCommentChange={handleCommentChange}
         />
       )}
 

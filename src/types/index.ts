@@ -67,15 +67,26 @@ export interface UpdateProjectData {
   description?: string; 
 } 
  
-export interface CreateTaskData { 
-  title: string; 
-  description?: string; 
-  projectId: string; 
-  status?: TaskStatus; 
-} 
- 
-export interface UpdateTaskData { 
-  title?: string; 
-  description?: string; 
-  status?: TaskStatus; 
-} 
+export interface CreateTaskData {
+  title: string;
+  description?: string;
+  projectId: string;
+  status?: TaskStatus;
+  assignedTo?: string | null;
+}
+
+export interface UpdateTaskData {
+  title?: string;
+  description?: string;
+  status?: TaskStatus;
+  assignedTo?: string | null;
+}
+
+export interface Comment {
+  id: string;
+  content: string;
+  taskId: string;
+  userId: string;
+  createdAt: string;
+  user: Pick<User, 'id' | 'name' | 'email'>;
+}

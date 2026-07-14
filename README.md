@@ -23,15 +23,15 @@ npm run lint     # Ejecuta ESLint
 
 ```
 src/
-├── api/           # Cliente Axios + servicios (auth, dashboard, tasks, projects)
+├── api/           # Cliente Axios + servicios (auth, dashboard, tasks, projects, comments, users)
 ├── assets/        # Imágenes y recursos estáticos
-├── components/    # Componentes UI (Sidebar, Header, KanbanColumn, TaskCard, etc.)
+├── components/    # Componentes UI (Sidebar, Header, KanbanColumn, TaskCard, CommentModal, etc.)
 ├── config/        # Configuración del tablero Kanban
 ├── context/       # AuthContext + hook useAuth
 ├── hooks/         # Custom hooks (useAsyncState)
 ├── layouts/       # AppLayout (Header + Sidebar + Footer)
 ├── pages/         # Login, Register, Dashboard, Projects, ProjectDetail, Tasks, Settings
-├── types/         # Interfaces compartidas (User, Project, Task, TaskStatus, etc.)
+├── types/         # Interfaces compartidas (User, Project, Task, Comment, TaskStatus, etc.)
 └── utils/         # Funciones utilitarias (theme, initials)
 ```
 
