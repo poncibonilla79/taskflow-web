@@ -32,7 +32,7 @@ src/
 ├── layouts/       # AppLayout (Header + Sidebar + Footer)
 ├── pages/         # Login, Register, Dashboard, Projects, ProjectDetail, Tasks, Settings
 ├── types/         # Interfaces compartidas (User, Project, Task, Comment, TaskStatus, etc.)
-└── utils/         # Funciones utilitarias (theme, initials)
+└── utils/         # Funciones utilitarias (initials)
 ```
 
 ## Rutas
